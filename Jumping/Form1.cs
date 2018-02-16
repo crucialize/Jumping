@@ -82,33 +82,23 @@ namespace Jumping
 		Point StartPoint, EndPoint, SelectedPoint;
 		int state = 0;
 
-		private void button4_Click(object sender, EventArgs e)
-		{
-			var img = GetOneScreenshot();
-			pictureBox1.Image = img;
-		}
 
-		private void button1_Click_1(object sender, EventArgs e)
+		private void Jump()
 		{
-			StartPoint = SelectedPoint;
-		}
-
-		private void button3_Click(object sender, EventArgs e)
-		{
-			const double MoveFactor = 4.55;
+			const double MoveFactor = 5.13;
 
 			//calculate d
-			double k;
+			double k, KFactor = 0.581;
 
 			int x1 = StartPoint.X,
 				y1 = StartPoint.Y,
 				x2 = EndPoint.X,
 				y2 = EndPoint.Y;
 
-			k = 1;
+			k = +KFactor;
 			var d1 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
 
-			k = -1;
+			k = -KFactor;
 			var d2 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
 
 			if (d1 > d2)
@@ -126,17 +116,29 @@ namespace Jumping
 
 		}
 
-		private void button2_Click(object sender, EventArgs e)
-		{
-			EndPoint = SelectedPoint;
-		}
-
-
 		private void pictureBox1_Click(object sender, EventArgs e)
 		{
-			var CurrentPoint = ((MouseEventArgs)e).Location;
-			SelectedPoint = CurrentPoint;
-			Console.WriteLine("Selected.");
+			var EArg = (MouseEventArgs)e;
+			if (EArg.Button == MouseButtons.Left)
+			{
+				if (state == 0)
+				{
+					//to select start point
+					StartPoint = EArg.Location;
+					state = 1;
+				}
+				else if (state == 1)
+				{
+					//to select end point
+					EndPoint = EArg.Location;
+					Jump();
+					state = 0;
+				}
+			}
+			else if (EArg.Button == MouseButtons.Right)
+			{
+				state = 0;//撤销
+			}
 		}
 	}
 
