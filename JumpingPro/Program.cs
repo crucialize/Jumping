@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -12,6 +13,7 @@ namespace JumpingPro
 	{
 		static void Main(string[] args)
 		{
+			Directory.CreateDirectory("./log");
 			var adb = new MyADB(@"C:\adb\adb.exe");
 			while (true)
 			{
@@ -24,7 +26,7 @@ namespace JumpingPro
 
 					CrossMark(StartP.X, StartP.Y, Color.Gold);
 					CrossMark(EndP.X, EndP.Y, Color.Red);
-					img.Save(string.Format(@"C:\Users\chenj\Desktop\out\{0}.png", DateTime.Now.ToString("yy.MM.dd-hh.mm.ss")));
+					img.Save(string.Format("./{0}.png", (int)(DateTime.Now-new DateTime(1970,1,1)).TotalSeconds));
 
 					var Time = CalculateJumpTime(StartP.X, StartP.Y, EndP.X, EndP.Y);
 					var r = new Random();
@@ -141,31 +143,12 @@ namespace JumpingPro
 							return y;
 						}
 
-						int TargetX1 = -1, TargetX2 = -1;
+						int TargetX=-1, TargetY=-1;//edge of end block
 
+						if (StartP.X < 1080 / 2)
 						{
-							var LastColor = img.GetPixel(25, f1(25));
-
-							for (int x = 25; x < 1080; x++)
-							{
-								var NowColor = img.GetPixel(x, f1(x));
-								var diff = ColorDiff(NowColor, LastColor);
-								if (diff<=20)
-								{
-									//similar
-								}
-								else
-								{
-									//sudden change
-									TargetX1 = x;
-									Console.WriteLine(string.Format("Color difference: {0}",diff));
-									break;
-								}
-							}
-
-						}
-
-						{
+							//start point is on the left
+							//jump to right
 							var LastColor = img.GetPixel(1070, f2(1070));
 
 							for (int x = 1070; x >= 0; x--)
@@ -178,36 +161,34 @@ namespace JumpingPro
 								else
 								{
 									//sudden change
-									TargetX2 = x;
+									TargetX = x;
+									TargetY = f2(x);
 									break;
 								}
 							}
 						}
-
-						int TargetX, TargetY;//edge of end block
-						if (Math.Abs(TargetX1 - StartP.X) < 60)
-						{
-							//not x1
-							TargetX = TargetX2;
-							TargetY = f2(TargetX);
-						}
-						else if (Math.Abs(TargetX2 - StartP.X) < 60)
-						{
-							//not x2
-							TargetX = TargetX1;
-							TargetY = f1(TargetX);
-						}
-						else if (TargetX1 < (1079 - TargetX2))
-						{
-							// \
-							TargetX = TargetX1;
-							TargetY = f1(TargetX);
-						}
 						else
 						{
-							// /
-							TargetX = TargetX2;
-							TargetY = f2(TargetX);
+							//right side
+							//jump to left
+							var LastColor = img.GetPixel(25, f1(25));
+
+							for (int x = 25; x < 1080; x++)
+							{
+								var NowColor = img.GetPixel(x, f1(x));
+								var diff = ColorDiff(NowColor, LastColor);
+								if (diff <= 20)
+								{
+									//similar
+								}
+								else
+								{
+									//sudden change
+									TargetX = x;
+									TargetY = f1(x);
+									break;
+								}
+							}
 						}
 
 						return new Point(TargetX, TargetY);
