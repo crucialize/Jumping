@@ -46,10 +46,10 @@ namespace JumpingPro
 					/// <param name="y2"></param>
 					int CalculateJumpTime(int x1, int y1, int x2, int y2)
 					{
-						const double MoveFactor = 1.40;
+						const double MoveFactor = 1.45;
 
 						//calculate d
-						double k, KFactor = 0.581;
+						double k, KFactor = 0.5775;
 
 						k = +KFactor;
 						var d1 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
