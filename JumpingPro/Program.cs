@@ -45,7 +45,7 @@ namespace JumpingPro
 					/// <param name="y2"></param>
 					int CalculateJumpTime(int x1, int y1, int x2, int y2)
 					{
-						const double MoveFactor = 1.45;
+						const double MoveFactor = 1.30;
 
 						//calculate d
 						double k, KFactor = 0.581;
@@ -145,10 +145,29 @@ namespace JumpingPro
 
 						int TargetX=-1, TargetY=-1;//edge of end block
 
-						if (StartP.X < 1080 / 2)
+						int TargetX1 = -1, TargetX2 = -1;
+
 						{
-							//start point is on the left
-							//jump to right
+							var LastColor = img.GetPixel(25, f1(25));
+
+							for (int x = 25; x < 1080; x++)
+							{
+								var NowColor = img.GetPixel(x, f1(x));
+								if (ColorDiff(NowColor, LastColor) <= 10)
+								{
+									//similar
+								}
+								else
+								{
+									//sudden change
+									TargetX1 = x;
+									break;
+								}
+							}
+
+						}
+
+						{
 							var LastColor = img.GetPixel(1070, f2(1070));
 
 							for (int x = 1070; x >= 0; x--)
@@ -161,34 +180,31 @@ namespace JumpingPro
 								else
 								{
 									//sudden change
-									TargetX = x;
-									TargetY = f2(x);
+									TargetX2 = x;
 									break;
 								}
 							}
 						}
+
+						if (Math.Abs(TargetX1 - StartP.X) <= 42)
+						{
+							TargetX = TargetX2;
+							TargetY = f2(TargetX);
+						}
+						else if (Math.Abs(TargetX2 - StartP.X) <= 42)
+						{
+							TargetX = TargetX1;
+							TargetY = f1(TargetX);
+						}
+						else if (StartP.X < 1080 / 2)
+						{
+							TargetX = TargetX2;
+							TargetY = f2(TargetX);
+						}
 						else
 						{
-							//right side
-							//jump to left
-							var LastColor = img.GetPixel(25, f1(25));
-
-							for (int x = 25; x < 1080; x++)
-							{
-								var NowColor = img.GetPixel(x, f1(x));
-								var diff = ColorDiff(NowColor, LastColor);
-								if (diff <= 20)
-								{
-									//similar
-								}
-								else
-								{
-									//sudden change
-									TargetX = x;
-									TargetY = f1(x);
-									break;
-								}
-							}
+							TargetX = TargetX1;
+							TargetY = f1(TargetX);
 						}
 
 						return new Point(TargetX, TargetY);
