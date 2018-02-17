@@ -154,7 +154,7 @@ namespace JumpingPro
 							for (int x = 25; x < 1080; x++)
 							{
 								var NowColor = img.GetPixel(x, f1(x));
-								if (ColorDiff(NowColor, LastColor) <= 10)
+								if (ColorDiff(NowColor, LastColor) <= 20)
 								{
 									//similar
 								}
