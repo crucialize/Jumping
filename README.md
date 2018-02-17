@@ -1,5 +1,7 @@
 # Jumping
 微信小游戏跳一跳辅助(c#)
+## 下载
+https://github.com/crucialize/Jumping/releases/
 ## 使用前
 - 现在版本只支持1920x1080的分辨率
 - 需要.Net Framework >= 4.6 ，Win10自带，XP没救，Win7请去微软官方网站下载：www.microsoft.com/zh-cn/download/details.aspx?id=53344
