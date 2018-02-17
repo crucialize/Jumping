@@ -18,8 +18,7 @@ namespace Jumping
 		AdbServer server;
 		AdbClient client;
 		DeviceData TargetDevice;
-		bool GettingScreenshot = false;
-
+		
 		void ExecuteADBShell(string command)
 		{
 			client.ExecuteRemoteCommand(command, TargetDevice, new Receiver());
@@ -89,7 +88,6 @@ namespace Jumping
 		{
 			lock (pictureBox1)
 			{
-				//please release
 				Bitmap img = new Bitmap(pictureBox1.Image);
 				var StartP=CalculateStartPoint();
 				var EndP = CalculateEndPoint();
