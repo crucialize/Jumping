@@ -43,7 +43,7 @@ namespace JumpingPro
 					/// <param name="y2"></param>
 					int CalculateJumpTime(int x1, int y1, int x2, int y2)
 					{
-						const double MoveFactor = 1.5;//3.8
+						const double MoveFactor = 1.45;
 
 						//calculate d
 						double k, KFactor = 0.581;
