@@ -149,7 +149,8 @@ namespace JumpingPro
 							for (int x = 25; x < 1080; x++)
 							{
 								var NowColor = img.GetPixel(x, f1(x));
-								if (ColorDiff(NowColor, LastColor) <= 10)
+								var diff = ColorDiff(NowColor, LastColor);
+								if (diff<=20)
 								{
 									//similar
 								}
@@ -157,6 +158,7 @@ namespace JumpingPro
 								{
 									//sudden change
 									TargetX1 = x;
+									Console.WriteLine(string.Format("Color difference: {0}",diff));
 									break;
 								}
 							}
