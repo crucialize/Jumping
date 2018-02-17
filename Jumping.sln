@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jumping", "Jumping\Jumping.csproj", "{0B8114B7-7418-4810-8BA7-AD2EA179AAED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JumpingPro", "JumpingPro\JumpingPro.csproj", "{76B8A0E3-758C-4E90-8D0B-06BF8AFAFF1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0B8114B7-7418-4810-8BA7-AD2EA179AAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B8114B7-7418-4810-8BA7-AD2EA179AAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B8114B7-7418-4810-8BA7-AD2EA179AAED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B8A0E3-758C-4E90-8D0B-06BF8AFAFF1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B8A0E3-758C-4E90-8D0B-06BF8AFAFF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B8A0E3-758C-4E90-8D0B-06BF8AFAFF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B8A0E3-758C-4E90-8D0B-06BF8AFAFF1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
