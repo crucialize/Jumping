@@ -250,7 +250,7 @@ namespace Jumping
 						}
 					}
 
-					int TargetX, TargetY;
+					int TargetX, TargetY;//edge of end block
 					if (TargetX1 < (1079 - TargetX2))
 					{
 						// \
@@ -264,67 +264,8 @@ namespace Jumping
 						TargetY = f2(TargetX);
 					}
 
-					var pl = FindNearSim(TargetX, TargetY, 5);
+					return new Point(TargetX, TargetY);
 
-					int EndX = (int)(from p in pl select p.X).Average();
-					int EndY = (int)(from p in pl select p.Y).Average();
-
-					return new Point(EndX, EndY);
-
-					List<Point> FindNearSim(int X, int Y, int DiffThreshold)
-					{
-						//Console.WriteLine("{0},{1}", X, Y);
-						var plist = new List<Point>();
-						int cnt = 0;
-						var TargetColor = img.GetPixel(X, Y);
-						Console.WriteLine("AAA");
-						var visited = new HashSet<(int, int)>();
-
-						void Travel(int px, int py)
-						{
-							visited.Add((px, py));
-							plist.Add(new Point(px, py));
-							//Console.WriteLine(plist.Count);
-
-							//4 directions:
-							TryTravel(px - 2, py);
-							TryTravel(px + 2, py);
-							TryTravel(px, py - 2);
-							TryTravel(px, py + 2);
-
-						}
-
-						void TryTravel(int px, int py)
-						{
-							if (CanTravel(px, py))
-								Travel(px, py);
-						}
-
-						bool CanTravel(int px, int py)
-						{
-							if(!(px<img.Size.Width
-								&&px>0
-								&&py<img.Size.Width
-								&& py > 0))
-							{
-								return false;
-							}
-							if (visited.Contains((px, py)))
-							{
-								return false;
-							}
-
-							var CurrentColor = img.GetPixel(px, py);
-							if (ColorDiff(CurrentColor, TargetColor) <= DiffThreshold)
-								return true;
-							else
-								return false;
-						}
-
-						Travel(X, Y);
-
-						return plist;
-					}
 				}
 
 			}
