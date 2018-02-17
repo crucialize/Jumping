@@ -13,7 +13,7 @@ namespace JumpingPro
 	{
 		static void Main(string[] args)
 		{
-			Directory.CreateDirectory("./log");
+			Directory.CreateDirectory("log");
 			var adb = new MyADB(@"C:\adb\adb.exe");
 			while (true)
 			{
@@ -26,7 +26,7 @@ namespace JumpingPro
 
 					CrossMark(StartP.X, StartP.Y, Color.Gold);
 					CrossMark(EndP.X, EndP.Y, Color.Red);
-					img.Save(string.Format("./{0}.png", (int)(DateTime.Now-new DateTime(1970,1,1)).TotalSeconds));
+					img.Save(string.Format("./log/{0}.png", (int)(DateTime.Now-new DateTime(1970,1,1)).TotalSeconds));
 
 					var Time = CalculateJumpTime(StartP.X, StartP.Y, EndP.X, EndP.Y);
 					var r = new Random();
