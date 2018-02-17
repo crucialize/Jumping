@@ -20,13 +20,14 @@ namespace JumpingPro
 				try
 				{
 					var img = adb.GetScreenshot();
-
+					int utick = (int)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
+					img.Save(string.Format("./log/{0}.png", utick));
 					var StartP = CalculateStartPoint();
 					var EndP = CalculateEndPoint();
 
 					CrossMark(StartP.X, StartP.Y, Color.Gold);
 					CrossMark(EndP.X, EndP.Y, Color.Red);
-					img.Save(string.Format("./log/{0}.png", (int)(DateTime.Now-new DateTime(1970,1,1)).TotalSeconds));
+					img.Save(string.Format("./log/{0}_modified.png",utick));
 
 					var Time = CalculateJumpTime(StartP.X, StartP.Y, EndP.X, EndP.Y);
 					var r = new Random();
@@ -45,7 +46,7 @@ namespace JumpingPro
 					/// <param name="y2"></param>
 					int CalculateJumpTime(int x1, int y1, int x2, int y2)
 					{
-						const double MoveFactor = 1.30;
+						const double MoveFactor = 1.40;
 
 						//calculate d
 						double k, KFactor = 0.581;
