@@ -59,7 +59,11 @@ namespace Jumping
 		async void GetAndShowContinously()
 		{
 			var img = await GetOneScreenshotAsync();
-			pictureBox1.Image = img;
+			lock (pictureBox1)
+			{
+				pictureBox1.Image = img;
+			}
+
 			Thread.Sleep(50);//in case adb.IO very fast
 			GetAndShowContinously();
 		}
@@ -76,71 +80,261 @@ namespace Jumping
 			TargetDevice = devices[0];//to-do: query user; 0 devices;
 
 			InitializeComponent();
+
 			GetAndShowContinously();
 		}
 
-		Point StartPoint, EndPoint, SelectedPoint;
-		int state = 0;
 
-
-		private void Jump()
+		private void button1_Click(object sender, EventArgs e)
 		{
-			const double MoveFactor = 5.13;
+			lock (pictureBox1)
+			{
+				//please release
+				Bitmap img = new Bitmap(pictureBox1.Image);
+				var StartP=CalculateStartPoint();
+				var EndP = CalculateEndPoint();
+				//CrossMark(StartP.X, StartP.Y, Color.Green);
+				//CrossMark(EndP.X, EndP.Y, Color.Red);
 
-			//calculate d
-			double k, KFactor = 0.581;
+				var Time = CalculateJumpTime(StartP.X, StartP.Y, EndP.X, EndP.Y);
+				ExecuteADBShell("input swipe 500 500 500 500 " + Time.ToString());
+				Console.WriteLine(Time);
+				//pictureBox1.Image = img;
+				//Thread.Sleep(2000);
 
-			int x1 = StartPoint.X,
-				y1 = StartPoint.Y,
-				x2 = EndPoint.X,
-				y2 = EndPoint.Y;
+				/// <summary>
+				/// 注意：xy对应1080p的坐标
+				/// </summary>
+				/// <param name="x1"></param>
+				/// <param name="y1"></param>
+				/// <param name="x2"></param>
+				/// <param name="y2"></param>
+				int CalculateJumpTime(int x1, int y1, int x2, int y2)
+				{
+					const double MoveFactor = 1.5;//3.8
 
-			k = +KFactor;
-			var d1 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
+					//calculate d
+					double k, KFactor = 0.581;
 
-			k = -KFactor;
-			var d2 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
+					k = +KFactor;
+					var d1 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
 
-			if (d1 > d2)
-				Console.WriteLine("/");
-			else if (d1 < d2)
-				Console.WriteLine("\\");
-			else
-				Console.WriteLine("=");
+					k = -KFactor;
+					var d2 = Math.Abs(k * (x2 - x1) + y1 - y2) / Math.Sqrt(k * k + 1);
 
-			var D = Math.Max(d1, d2);
+					var D = Math.Max(d1, d2);
 
-			var time = (int)(D * MoveFactor);
+					var Jtime = (int)(D * MoveFactor);
 
-			ExecuteADBShell("input swipe 500 500 500 500 " + time.ToString());
+					return Jtime;
+				}
+				int ColorDiff(Color a, Color b)
+			{
+				var Rdiff = Math.Abs(a.R - b.R);
+				var Bdiff = Math.Abs(a.B - b.B);
+				var Gdiff = Math.Abs(a.G - b.G);
 
+				return Rdiff + Bdiff + Gdiff;
+			}
+				void CrossMark(int px, int py, Color CrossColor)
+				{
+					for (int x = px - 1; x <= px + 1; x++)
+						for (int y = py - 50; y <= py + 50; y++)
+						{
+							try
+							{
+								img.SetPixel(x, y, CrossColor);
+							}
+							catch (Exception)
+							{
+							}
+						}
+
+					for (int y = py - 1; y <= py + 1; y++)
+						for (int x = px - 50; x <= px + 50; x++)
+						{
+							try
+							{
+								img.SetPixel(x, y, CrossColor);
+							}
+							catch (Exception)
+							{
+							}
+						}
+
+				}
+				Point CalculateStartPoint()
+				{
+					const int DiffThreshold = 30;
+					var StartColor = Color.FromArgb(56, 56, 98);
+
+					List<Point> PointColl = new List<Point>();
+
+					for (int x = 0; x < img.Size.Width; x += 2)
+						for (int y = 0; y < img.Size.Height; y += 2)
+						{
+							if (ColorDiff(StartColor, img.GetPixel(x, y)) <= DiffThreshold)
+							{
+								img.SetPixel(x, y, Color.Gold);
+								PointColl.Add(new Point(x, y));
+							}
+						}
+
+					//center of start point
+					int StartX, StartY;
+					StartX = (int)(from p in PointColl select p.X).Average();
+					StartY = (int)(from p in PointColl select p.Y).Average();
+
+					StartY += 67;
+
+					return new Point(StartX, StartY);
+				}
+				Point CalculateEndPoint()
+				{
+					double KFactor = 0.581;
+
+					int f1(int x)
+					{
+						double k = +KFactor;
+						int x0 = 335, y0 = 842;
+						int y = (int)(k * (x - x0) + y0);
+						return y;
+					}
+
+					int f2(int x)
+					{
+						double k = -KFactor;
+						int x0 = 838, y0 = 842;
+						int y = (int)(k * (x - x0) + y0);
+						return y;
+					}
+
+					int TargetX1 = -1, TargetX2 = -1;
+
+					{
+						var LastColor = img.GetPixel(25, f1(25));
+
+						for (int x = 25; x < 1080; x++)
+						{
+							var NowColor = img.GetPixel(x, f1(x));
+							if (ColorDiff(NowColor, LastColor) <= 10)
+							{
+								//similar
+							}
+							else
+							{
+								//sudden change
+								TargetX1 = x;
+								break;
+							}
+						}
+
+					}
+
+					{
+						var LastColor = img.GetPixel(1070, f2(1070));
+
+						for (int x = 1070; x >= 0; x--)
+						{
+							var NowColor = img.GetPixel(x, f2(x));
+							if (ColorDiff(NowColor, LastColor) <= 20)
+							{
+								//similar
+							}
+							else
+							{
+								//sudden change
+								TargetX2 = x;
+								break;
+							}
+						}
+					}
+
+					int TargetX, TargetY;
+					if (TargetX1 < (1079 - TargetX2))
+					{
+						// \
+						TargetX = TargetX1;
+						TargetY = f1(TargetX);
+					}
+					else
+					{
+						// /
+						TargetX = TargetX2;
+						TargetY = f2(TargetX);
+					}
+
+					var pl = FindNearSim(TargetX, TargetY, 5);
+
+					int EndX = (int)(from p in pl select p.X).Average();
+					int EndY = (int)(from p in pl select p.Y).Average();
+
+					return new Point(EndX, EndY);
+
+					List<Point> FindNearSim(int X, int Y, int DiffThreshold)
+					{
+						//Console.WriteLine("{0},{1}", X, Y);
+						var plist = new List<Point>();
+						int cnt = 0;
+						var TargetColor = img.GetPixel(X, Y);
+						Console.WriteLine("AAA");
+						var visited = new HashSet<(int, int)>();
+
+						void Travel(int px, int py)
+						{
+							visited.Add((px, py));
+							plist.Add(new Point(px, py));
+							//Console.WriteLine(plist.Count);
+
+							//4 directions:
+							TryTravel(px - 2, py);
+							TryTravel(px + 2, py);
+							TryTravel(px, py - 2);
+							TryTravel(px, py + 2);
+
+						}
+
+						void TryTravel(int px, int py)
+						{
+							if (CanTravel(px, py))
+								Travel(px, py);
+						}
+
+						bool CanTravel(int px, int py)
+						{
+							if(!(px<img.Size.Width
+								&&px>0
+								&&py<img.Size.Width
+								&& py > 0))
+							{
+								return false;
+							}
+							if (visited.Contains((px, py)))
+							{
+								return false;
+							}
+
+							var CurrentColor = img.GetPixel(px, py);
+							if (ColorDiff(CurrentColor, TargetColor) <= DiffThreshold)
+								return true;
+							else
+								return false;
+						}
+
+						Travel(X, Y);
+
+						return plist;
+					}
+				}
+
+			}
 		}
 
-		private void pictureBox1_Click(object sender, EventArgs e)
-		{
-			var EArg = (MouseEventArgs)e;
-			if (EArg.Button == MouseButtons.Left)
-			{
-				if (state == 0)
-				{
-					//to select start point
-					StartPoint = EArg.Location;
-					state = 1;
-				}
-				else if (state == 1)
-				{
-					//to select end point
-					EndPoint = EArg.Location;
-					Jump();
-					state = 0;
-				}
-			}
-			else if (EArg.Button == MouseButtons.Right)
-			{
-				state = 0;//撤销
-			}
-		}
+
+
 	}
+
+}
 
 	class Receiver : IShellOutputReceiver
 	{
@@ -157,4 +351,3 @@ namespace Jumping
 		}
 	}
 
-}
