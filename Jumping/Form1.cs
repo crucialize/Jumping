@@ -97,7 +97,10 @@ namespace Jumping
 				//CrossMark(EndP.X, EndP.Y, Color.Red);
 
 				var Time = CalculateJumpTime(StartP.X, StartP.Y, EndP.X, EndP.Y);
-				ExecuteADBShell("input swipe 500 500 500 500 " + Time.ToString());
+				var r = new Random();
+				int TapX = r.Next(100, 1000);
+				int TapY = r.Next(600, 1600);
+				ExecuteADBShell(string.Format("input swipe {0} {1} {2} {3} {4}",TapX,TapY,TapX,TapY,Time));
 				Console.WriteLine(Time);
 				//pictureBox1.Image = img;
 				//Thread.Sleep(2000);
