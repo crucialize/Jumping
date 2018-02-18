@@ -20,6 +20,7 @@ namespace JumpingPro
 				try
 				{
 					var img = adb.GetScreenshot();
+
 					int utick = (int)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
 					img.Save(string.Format("./log/{0}.png", utick));
 
