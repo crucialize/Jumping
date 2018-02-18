@@ -33,6 +33,9 @@ namespace AlgorithmTest
 				var img = new Bitmap(ImgFiles[i]);
 				var StartPoint=img.CalculateStartPoint();
 				img.CrossMark(StartPoint.X, StartPoint.Y,Color.White);
+
+
+
 				img.Save(OutputDir + new FileInfo(ImgFiles[i]).Name + ".png");
 			}
 

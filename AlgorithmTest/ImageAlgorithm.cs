@@ -161,5 +161,15 @@ namespace JumpingPro
 			return new Point(TargetX, TargetY);
 
 		}
+
+		public static void BFS(this Bitmap img,int x,int y)
+		{
+			//DFS会爆栈
+			var ToVisit = new List<Point>();
+			var Visited = new HashSet<Point>();
+
+			
+			
+		}
 	}
 }
