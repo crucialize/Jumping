@@ -74,7 +74,7 @@ namespace JumpingPro
 			return new Point(StartX, StartY);
 		}
 
-		public static Point CalculateEndPoint(this Bitmap img)
+		public static Point CalculateEndPoint(this Bitmap img,Point StartP)
 		{
 			double KFactor = 0.581;
 

@@ -20,12 +20,11 @@ namespace JumpingPro
 				try
 				{
 					var img = adb.GetScreenshot();
-
 					int utick = (int)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
 					img.Save(string.Format("./log/{0}.png", utick));
 
 					var StartP = img.CalculateStartPoint();
-					var EndP = img.CalculateEndPoint();
+					var EndP = img.CalculateEndPoint(StartP);
 
 					img.CrossMark(StartP.X, StartP.Y, Color.Gold);
 					img.CrossMark(EndP.X, EndP.Y, Color.Red);
