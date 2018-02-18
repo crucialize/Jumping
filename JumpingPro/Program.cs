@@ -19,7 +19,9 @@ namespace JumpingPro
 			{
 				try
 				{
+					Console.WriteLine("Start to get screenshot.");
 					var img = adb.GetScreenshot();
+
 					int utick = (int)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
 					img.Save(string.Format("./log/{0}.png", utick));
 
@@ -36,7 +38,7 @@ namespace JumpingPro
 					int TapY = r.Next(600, 1600);
 					adb.ExecuteADBShell(string.Format("input swipe {0} {1} {2} {3} {4}", TapX, TapY, TapX, TapY, Time));
 					//Console.WriteLine("execute end");
-					Thread.Sleep(1500);
+					Thread.Sleep(1250);
 
 					/// <summary>
 					/// 注意：xy对应1080p的坐标
