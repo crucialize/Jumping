@@ -19,7 +19,7 @@ namespace AlgorithmTest
 			Directory.CreateDirectory(OutputDir);
 
 
-			string LogDir = @"C:\Users\chenj\Desktop\Jumping\JumpingPro\bin\Debug\log";
+			string LogDir = @"C:\Users\Crucial\Desktop\train";
 			var ImgFiles = new List<string>();
 
 			foreach(var f in Directory.GetFiles(LogDir, "*.png"))
@@ -28,15 +28,34 @@ namespace AlgorithmTest
 					ImgFiles.Add(f);
 			}
 
-			for(int i = 0; i < 5; i++)
+			for(int i = 0; i < ImgFiles.Count; i++)
 			{
-				var img = new Bitmap(ImgFiles[i]);
-				var StartPoint=img.CalculateStartPoint();
-				img.CrossMark(StartPoint.X, StartPoint.Y,Color.White);
+				try
+				{
+					var img = new Bitmap(ImgFiles[i]);
+					var StartPoint = img.CalculateStartPoint();
+					img.CrossMark(StartPoint.X, StartPoint.Y, Color.White);
+
+					var EndEdge = img.CalculateEndPoint(StartPoint);
+
+					var plist = new List<Point>();
 
 
+					img.BFS(EndEdge.X, EndEdge.Y, p => plist.Add(p));
 
-				img.Save(OutputDir + new FileInfo(ImgFiles[i]).Name + ".png");
+					img.CrossMark(EndEdge.X, EndEdge.Y, Color.Black);
+
+					if (plist.Count <= 500)
+					{
+						//边缘 少跳一点
+					}
+
+					img.CrossMark((int)plist.Average(p => p.X), (int)plist.Average(p => p.Y), Color.Red);
+
+					img.Save(OutputDir + new FileInfo(ImgFiles[i]).Name + ".png");
+					img.Dispose();
+				}
+				catch { }
 			}
 
 		}
