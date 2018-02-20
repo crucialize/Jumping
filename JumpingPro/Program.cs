@@ -47,11 +47,11 @@ namespace JumpingPro
 					if (plist.Count <= 500)
 					{
 						Console.WriteLine("Edge.");
-						time = CalculateJumpTime(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y, true);
+						time = CalculateJumpTime2(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y, true);
 					}
 					else
 					{
-						time = CalculateJumpTime(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y, false);
+						time = CalculateJumpTime2(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y, false);
 					}
 
 					var r = new Random();
@@ -87,6 +87,24 @@ namespace JumpingPro
 						var D = Math.Max(d1, d2);
 
 						var Jtime = (int)(D * MoveFactor);
+
+						return Jtime;
+					}
+
+
+					int CalculateJumpTime2(int x1, int y1, int x2, int y2, bool less)
+					{
+						double JumpFactor = 1.65;
+
+						if (less)
+							JumpFactor -= 0.123;
+
+						//calculate d
+						double k, KFactor = 0.5820;
+
+						var D = Math.Abs(x1 - x2);
+
+						var Jtime = (int)(D * JumpFactor);
 
 						return Jtime;
 					}
