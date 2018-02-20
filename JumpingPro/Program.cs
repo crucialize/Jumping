@@ -94,7 +94,7 @@ namespace JumpingPro
 
 					int CalculateJumpTime2(int x1, int y1, int x2, int y2, bool less)
 					{
-						double JumpFactor = 1.65;
+						double JumpFactor = 1.38;
 
 						if (less)
 							JumpFactor -= 0.123;
@@ -102,7 +102,8 @@ namespace JumpingPro
 						//calculate d
 						double k, KFactor = 0.5820;
 
-						var D = Math.Abs(x1 - x2);
+						var D = Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+
 
 						var Jtime = (int)(D * JumpFactor);
 
