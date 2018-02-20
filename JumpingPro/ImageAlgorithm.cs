@@ -19,7 +19,7 @@ namespace JumpingPro
 			return Rdiff + Bdiff + Gdiff;
 		}
 
-		public static void CrossMark(this Bitmap img,int px, int py, Color CrossColor)
+		public static void CrossMark(this Bitmap img, int px, int py, Color CrossColor)
 		{
 			for (int x = px - 1; x <= px + 1; x++)
 				for (int y = py - 50; y <= py + 50; y++)
@@ -54,8 +54,8 @@ namespace JumpingPro
 
 			List<Point> PointColl = new List<Point>();
 
-			for (int x = 0; x < img.Size.Width; x += 2)
-				for (int y = 0; y < img.Size.Height; y += 2)
+			for (int x = 0; x < img.Size.Width; x += 5)
+				for (int y = 0; y < img.Size.Height; y += 5)
 				{
 					if (ColorDiff(StartColor, img.GetPixel(x, y)) <= DiffThreshold)
 					{
@@ -69,12 +69,12 @@ namespace JumpingPro
 			StartX = (int)(from p in PointColl select p.X).Average();
 			StartY = (int)(from p in PointColl select p.Y).Average();
 
-			StartY += 67;
+			StartY += 66;
 
 			return new Point(StartX, StartY);
 		}
 
-		public static Point CalculateEndPoint(this Bitmap img,Point StartP)
+		public static Point CalculateEndPoint(this Bitmap img, Point StartP)
 		{
 			double KFactor = 0.581;
 
@@ -159,6 +159,55 @@ namespace JumpingPro
 			}
 
 			return new Point(TargetX, TargetY);
+
+		}
+
+		public delegate void PointCallback(Point point);
+
+		public static void BFS(this Bitmap img, int x, int y, PointCallback callback)
+		{
+			//DFS会爆栈
+			var q = new Queue<Point>();
+			var Visited = new HashSet<Point>();
+
+			q.Enqueue(new Point(x, y));
+
+			while (q.Count > 0)
+			{
+				var NowPoint = q.Dequeue();
+				callback(NowPoint);
+
+				int NowX = NowPoint.X, NowY = NowPoint.Y;
+
+				TryVisit(NowX - 1, NowY);
+				TryVisit(NowX, NowY - 1);
+				TryVisit(NowX + 1, NowY);
+				TryVisit(NowX, NowY + 1);
+
+
+				bool _CanVisit(int px, int py)
+				{
+					bool IsVisited = Visited.Contains(new Point(px, py));
+
+					bool IsColorOk = ColorDiff(img.GetPixel(NowX, NowY), img.GetPixel(px, py)) <= 15;
+
+					bool IsInRange = px > 0 && px < img.Width
+						&& py > 0 && py < img.Height;
+					;
+
+					return !IsVisited && IsInRange && IsColorOk;
+				}
+
+				void TryVisit(int px, int py)
+				{
+					if (_CanVisit(px, py))
+					{
+						q.Enqueue(new Point(px, py));
+						Visited.Add(new Point(px, py));
+					}
+				}
+
+			}
 
 		}
 	}

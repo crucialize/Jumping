@@ -45,14 +45,21 @@ namespace AlgorithmTest
 
 					img.CrossMark(EndEdge.X, EndEdge.Y, Color.Black);
 
+					Point EndPoint = new Point();
+
+					EndPoint.X = (int)plist.Average(p => p.X);
+					EndPoint.Y= (int)plist.Average(p => p.Y);
+
+					double MoveFactor = 2.00;
+
 					if (plist.Count <= 500)
-					{
 						//边缘 少跳一点
-					}
+						MoveFactor -= 0.2;
 
-					img.CrossMark((int)plist.Average(p => p.X), (int)plist.Average(p => p.Y), Color.Red);
+					//img.Save(OutputDir + new FileInfo(ImgFiles[i]).Name + ".png");
+					
+					
 
-					img.Save(OutputDir + new FileInfo(ImgFiles[i]).Name + ".png");
 					img.Dispose();
 				}
 				catch { }
